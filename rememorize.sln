@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookShop.API", "BookShop.API.csproj", "{28EB1402-4144-491A-AEA7-F04366DF313D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rememorize.Tests", "..\rememorize.Tests\rememorize.Tests.csproj", "{8397F729-5D3C-405B-8B5D-505E701A345A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28EB1402-4144-491A-AEA7-F04366DF313D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28EB1402-4144-491A-AEA7-F04366DF313D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28EB1402-4144-491A-AEA7-F04366DF313D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28EB1402-4144-491A-AEA7-F04366DF313D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8397F729-5D3C-405B-8B5D-505E701A345A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8397F729-5D3C-405B-8B5D-505E701A345A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8397F729-5D3C-405B-8B5D-505E701A345A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8397F729-5D3C-405B-8B5D-505E701A345A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
