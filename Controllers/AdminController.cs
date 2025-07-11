@@ -1,29 +1,33 @@
 ﻿using AutoMapper;
+using BookShop.API.Dtos;
+using BookShop.API.Models;
+using BookShop.API.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Nest;
 using rememorize.Dtos;
 using rememorize.Models;
 using rememorize.Service;
 using rememorize.Service.Caching;
 using rememorize.Service.ELS;
 
-namespace rememorize.Controllers
+namespace BookShop.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookController : ControllerBase
+    public class AdminController : ControllerBase
     {
         private readonly IBookRepository _repository;
         private readonly IMapper _mapper;
         private readonly ICacheService _cacheService;
         private readonly IElasticService _elasticService;
-        public BookController(IBookRepository repository, IMapper mapper, ICacheService cacheService, IElasticService elasticService)
+        private readonly IBuyHistoryRepository _historyRepository;
+        public AdminController(IBookRepository repository, IMapper mapper, ICacheService cacheService, IElasticService elasticService, IBuyHistoryRepository historyRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _cacheService = cacheService;
             _elasticService = elasticService;
+            _historyRepository = historyRepository;
         }
 
         [HttpPost("PostBook")]
@@ -61,10 +65,8 @@ namespace rememorize.Controllers
 
                 if (cacheNames != null && cacheNames.Count() > 0)
                 {
-                    Console.WriteLine("CACHE WORKED");
                     return Ok(_mapper.Map<IEnumerable<BookReadDto>>(cacheNames));
                 }
-                Console.WriteLine("CACHED");
                 cacheNames = await _repository.GetAllBooks();
                 var expiryTime = DateTimeOffset.Now.AddMinutes(5);
                 _cacheService.SetData<IEnumerable<Book>>("books", cacheNames, expiryTime);
@@ -122,7 +124,8 @@ namespace rememorize.Controllers
             try
             {
                 await _elasticService.UpdateBook(bookModelFromRepo);
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine("ELS update failed: " + ex.Message);
             }
@@ -147,28 +150,29 @@ namespace rememorize.Controllers
             }
         }
 
-        [HttpPost("BuyByCode/{code}")]
-        public async Task<ActionResult> BuyBook(string code)
+        [HttpGet("GetBuyHistory")]
+        public async Task<IActionResult> GetBuyHistory()
         {
-            var book = await _repository.BuyBook(code);
+            var historyCache = _cacheService.GetData<IEnumerable<BuyHistory>>("buyHistory");
 
-            if (book == null) return NotFound("Kitob topilmadi!");
-            if (book.Quantity <= 0) return BadRequest("Kitob Qolmagan!");
+            if (historyCache != null && historyCache.Count() > 0)
+            {
+                Console.WriteLine("FROM CACHE");
+                return Ok(_mapper.Map<IEnumerable<BuyHistoryReadDto>>(historyCache));
+            }
+            Console.WriteLine("FROM DB!");
 
-            book.Quantity--;
+            var history = await _historyRepository.GetAll();
+            var expiryTime = DateTimeOffset.Now.AddMinutes(5);
 
-            await _repository.UpdateBook(book);
-            await _repository.SaveChangesAsync();
-            await _elasticService.UpdateBook(book);
-            _cacheService.RemoveData("books");
+            _cacheService.SetData("buyHistory", history, expiryTime);
 
-            return Ok($"Kitob sotib olindi! Qolgan soni: {book.Quantity}");
+            return Ok(_mapper.Map<IEnumerable<BuyHistoryReadDto>>(history));
         }
 
         private string GenerateBookCode()
         {
             return $"EL-{Guid.NewGuid().ToString().Substring(0, 5).ToUpper()}";
         }
-
     }
 }

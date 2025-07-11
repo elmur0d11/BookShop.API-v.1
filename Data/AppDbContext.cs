@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BookShop.API.Models;
+using Microsoft.EntityFrameworkCore;
 using rememorize.Models;
 
 namespace rememorize.Data
@@ -8,5 +9,6 @@ namespace rememorize.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Book> Books { get; set; }
+        public DbSet<BuyHistory> BuyHistories { get; set; }
     }
 }

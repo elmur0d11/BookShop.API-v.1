@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using rememorize.Data;
@@ -11,9 +12,11 @@ using rememorize.Data;
 namespace rememorize.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250711160034_NewModelMigration")]
+    partial class NewModelMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,43 +41,12 @@ namespace rememorize.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("BuyCount")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("BuyDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("LastBuyDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.ToTable("BuyHistories");
-                });
-
-            modelBuilder.Entity("BookShop.API.Models.WishList", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("BookCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("WishLists");
                 });
 
             modelBuilder.Entity("rememorize.Models.Book", b =>
@@ -107,17 +79,6 @@ namespace rememorize.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Books");
-                });
-
-            modelBuilder.Entity("BookShop.API.Models.WishList", b =>
-                {
-                    b.HasOne("rememorize.Models.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
                 });
 #pragma warning restore 612, 618
         }

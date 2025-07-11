@@ -1,3 +1,4 @@
+using BookShop.API.Service;
 using Microsoft.EntityFrameworkCore;
 using rememorize.Data;
 using rememorize.Extensions;
@@ -20,6 +21,7 @@ builder.Services.AddDbContextPool<AppDbContext>(options => options.UseNpgsql(
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IElasticService, ElasticService>();
+builder.Services.AddScoped<IBuyHistoryRepository, BuyHistoryRepository>();
 
 //AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
