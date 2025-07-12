@@ -12,8 +12,8 @@ using rememorize.Data;
 namespace rememorize.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250711175748_AddedWishListMigration")]
-    partial class AddedWishListMigration
+    [Migration("20250712145819_AddWishListMigration")]
+    partial class AddWishListMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,19 +63,22 @@ namespace rememorize.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("BookCode")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("BookId")
+                    b.Property<string>("BookName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookId");
 
                     b.ToTable("WishLists");
                 });
@@ -110,17 +113,6 @@ namespace rememorize.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Books");
-                });
-
-            modelBuilder.Entity("BookShop.API.Models.WishList", b =>
-                {
-                    b.HasOne("rememorize.Models.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
                 });
 #pragma warning restore 612, 618
         }

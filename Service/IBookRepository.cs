@@ -14,7 +14,7 @@ namespace rememorize.Service
 
         Task UpdateBook(Book book);
 
-        Task<Book> BuyBook(string code);
+        Task<Book> FindByCode(string code);
 
         public Task<bool> SaveChangesAsync();
     }

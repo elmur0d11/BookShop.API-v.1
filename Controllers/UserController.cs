@@ -21,16 +21,19 @@ namespace BookShop.API.Controllers
         private readonly ICacheService _cacheService;
         private readonly IElasticService _elasticService;
         private readonly IBuyHistoryRepository _historyRepository;
+        private readonly IWishListRepository _wishRepository;
         public UserController(
             IBookRepository repository, IMapper mapper,
             ICacheService cacheService, IElasticService elasticService,
-            IBuyHistoryRepository historyRepository)
+            IBuyHistoryRepository historyRepository,
+            IWishListRepository wishRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _cacheService = cacheService;
             _elasticService = elasticService;
             _historyRepository = historyRepository;
+            _wishRepository = wishRepository;
         }
 
         [HttpGet("GetAllBooks")]
@@ -77,7 +80,7 @@ namespace BookShop.API.Controllers
         [HttpPost("BuyByCode/{code}")]
         public async Task<ActionResult> BuyBook(string code)
         {
-            var book = await _repository.BuyBook(code);
+            var book = await _repository.FindByCode(code);
 
             if (book == null) return NotFound("Kitob topilmadi!");
             if (book.Quantity <= 0) return BadRequest("Kitob Qolmagan!");
@@ -93,6 +96,46 @@ namespace BookShop.API.Controllers
             _cacheService.RemoveData("buyHistory");
 
             return Ok($"Kitob sotib olindi! Qolgan soni: {book.Quantity}");
+        }
+
+        [HttpPost("WishList")]
+        public async Task<ActionResult> AddToWishList(string code)
+        {
+            var book = await _repository.FindByCode(code);
+
+            if (book == null) return NotFound("Kitob Topilmadi");
+
+            var existing = _wishRepository.ChekExist(code);
+            if(existing == null)
+                return BadRequest("Bu kitob allaqachon WishListda mavjud");
+
+            var wishList = new WishList
+            {
+                BookName = book.BookName,
+                BookCode = book.BookCode,
+                Author = book.Author,
+                Quantity = book.Quantity
+            };
+
+            await _wishRepository.AddToWish(wishList);
+            _cacheService.RemoveData("wishList");
+
+            return Ok("Kitob WishListga qoshildi!");
+        }
+
+        [HttpGet("WishedBooks")]
+        public async Task<ActionResult> GetWishedBooks()
+        {
+            var cachedWish = _cacheService.GetData<IEnumerable<WishList>>("wishList");
+
+            if (cachedWish != null && cachedWish.Count() > 0)
+                return Ok(cachedWish);
+
+            var wishList = await _wishRepository.GetAll();
+            var expiryTime = DateTimeOffset.Now.AddMinutes(5);
+            _cacheService.SetData("wishList", wishList, expiryTime);
+
+            return Ok(wishList);
         }
 
     }

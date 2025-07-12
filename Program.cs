@@ -22,6 +22,7 @@ builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<IElasticService, ElasticService>();
 builder.Services.AddScoped<IBuyHistoryRepository, BuyHistoryRepository>();
+builder.Services.AddScoped<IWishListRepository, WishListRepository>();
 
 //AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

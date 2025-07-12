@@ -43,7 +43,7 @@ namespace rememorize.Service
             ///
         }
 
-        public async Task<Book> BuyBook(string code)
+        public async Task<Book> FindByCode(string code)
         {
             return await _context.Books.FirstOrDefaultAsync(b => b.BookCode == code);
         }

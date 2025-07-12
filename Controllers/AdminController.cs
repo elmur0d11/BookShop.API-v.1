@@ -157,10 +157,8 @@ namespace BookShop.API.Controllers
 
             if (historyCache != null && historyCache.Count() > 0)
             {
-                Console.WriteLine("FROM CACHE");
                 return Ok(_mapper.Map<IEnumerable<BuyHistoryReadDto>>(historyCache));
             }
-            Console.WriteLine("FROM DB!");
 
             var history = await _historyRepository.GetAll();
             var expiryTime = DateTimeOffset.Now.AddMinutes(5);
