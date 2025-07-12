@@ -1,1 +1,1 @@
-# Book Shop API - v.beta
+# Book Shop API - v.1
