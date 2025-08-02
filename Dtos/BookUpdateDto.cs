@@ -14,5 +14,11 @@ namespace rememorize.Dtos
 
         [Required]
         public string Description { get; set; } = string.Empty;
+
+        [Required]
+        public string BookCode { get; set; } = string.Empty;
+
+        [Required]
+        public int Quantity { get; set; }
     }
 }

@@ -1,6 +1,0 @@
-﻿1. CRUD +
-2. CACHING +
-3. ELS_LOGGING +
-4. Auto Mapping +
-5. Controller's Test +
-
